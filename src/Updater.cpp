@@ -188,6 +188,14 @@ void Updater::checkForUpdates() {
 }
 
 /**
+ * Downloads the update definitions file referenced by the
+ * \c downloadUrl() function.
+ */
+void Updater::startDownload() {
+    m_downloader->startDownload (QUrl (downloadUrl()));
+}
+
+/**
  * Changes the \c url in which the \c Updater can find the update definitions
  * file.
  */
@@ -312,7 +320,7 @@ void Updater::setUpdateAvailable (const bool& available) {
                 QDesktopServices::openUrl (QUrl (m_openUrl));
 
             else if (downloaderEnabled())
-                m_downloader->startDownload (QUrl (downloadUrl()));
+                startDownload();
 
             else
                 QDesktopServices::openUrl (QUrl (downloadUrl()));

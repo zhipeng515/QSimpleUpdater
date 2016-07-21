@@ -69,6 +69,7 @@ class QSU_DECL Updater : public QObject {
 
   public slots:
     void checkForUpdates();
+    void startDownload();
     void setUrl (const QString& url);
     void setModuleName (const QString& name);
     void setNotifyOnUpdate (const bool& notify);

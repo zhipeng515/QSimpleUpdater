@@ -88,6 +88,7 @@ class QSU_DECL QSimpleUpdater : public QObject {
 
   public slots:
     void checkForUpdates (const QString& url);
+    void startDownload (const QString& url);
     void setModuleName (const QString& url, const QString& name);
     void setNotifyOnUpdate (const QString& url, const bool& notify);
     void setNotifyOnFinish (const QString& url, const bool& notify);

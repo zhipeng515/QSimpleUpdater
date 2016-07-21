@@ -197,6 +197,18 @@ void QSimpleUpdater::checkForUpdates (const QString& url) {
 }
 
 /**
+ * Instructs the \c Updater instance with the registered \c url to download
+ * the update definitions file.
+ *
+ * \note If an \c Updater instance registered with the given \a url is not
+ *       found, that \c Updater instance will be initialized automatically
+ */
+void QSimpleUpdater::startDownload (const QString& url) {
+    getUpdater (url)->startDownload();
+}
+
+
+/**
  * Changes the module \a name of the \c Updater instance registered at the
  * given \a url.
  *
