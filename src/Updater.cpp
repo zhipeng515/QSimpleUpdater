@@ -36,6 +36,7 @@
 
 #include "Updater.h"
 #include "Downloader.h"
+#include "UpdateDialog.h"
 
 Updater::Updater() {
     m_url = "";
@@ -304,18 +305,8 @@ void Updater::setUpdateAvailable (const bool& available) {
     box.setIcon (QMessageBox::Information);
 
     if (updateAvailable() && (notifyOnUpdate() || notifyOnFinish())) {
-        QString text = tr ("Would you like to download the update now?");
-        QString title = "<h3>"
-                        + tr ("Version %1 of %2 has been released!")
-                        .arg (latestVersion()).arg (moduleName())
-                        + "</h3>";
-
-        box.setText (title);
-        box.setInformativeText (text);
-        box.setStandardButtons (QMessageBox::No | QMessageBox::Yes);
-        box.setDefaultButton   (QMessageBox::Yes);
-
-        if (box.exec() == QMessageBox::Yes) {
+        UpdateDialog updateDialog(m_url);
+        if (updateDialog.exec() == QDialog::Accepted) {
             if (!m_openUrl.isEmpty())
                 QDesktopServices::openUrl (QUrl (m_openUrl));
 

@@ -45,6 +45,7 @@ Downloader::Downloader (QWidget* parent) : QWidget (parent) {
 
     /* Initialize private members */
     m_manager = new QNetworkAccessManager();
+    m_reply = NULL;
 
     /* Initialize internal values */
     m_filePath = "";
@@ -69,8 +70,13 @@ Downloader::Downloader (QWidget* parent) : QWidget (parent) {
 
 Downloader::~Downloader() {
     delete m_ui;
-    delete m_reply;
-    delete m_manager;
+    if(m_reply) {
+        m_reply->abort();
+        delete m_reply;
+    }
+    if(m_manager) {
+        delete m_manager;
+    }
 }
 
 /**
@@ -94,6 +100,12 @@ void Downloader::startDownload (const QUrl& url) {
 
     /* Start download */
     m_startTime = QDateTime::currentDateTime().toTime_t();
+
+    if(m_reply) {
+        m_reply->abort();
+        delete m_reply;
+    }
+
     m_reply = m_manager->get (QNetworkRequest (url));
 
     /* Update UI when download progress changes or download finishes */
