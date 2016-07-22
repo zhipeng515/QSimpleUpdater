@@ -35,6 +35,7 @@ static QList<Updater*> UPDATERS;
 
 QSimpleUpdater::~QSimpleUpdater() {
     URLS.clear();
+    qDeleteAll(UPDATERS);
     UPDATERS.clear();
 }
 

@@ -79,12 +79,11 @@ class QSU_DECL Updater : public QObject {
     void setPlatformKey (const QString& platformKey);
     void setUseCustomInstallProcedures (const bool& custom);
 
+    static bool compare (const QString& x, const QString& y);
+
   private slots:
     void onReply (QNetworkReply* reply);
     void setUpdateAvailable (const bool& available);
-
-  private:
-    bool compare (const QString& x, const QString& y);
 
   private:
     QString m_url;
