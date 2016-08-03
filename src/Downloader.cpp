@@ -152,6 +152,8 @@ void Downloader::installUpdate() {
     box.setIcon (QMessageBox::Question);
     box.setDefaultButton   (QMessageBox::Ok);
     box.setStandardButtons (QMessageBox::Ok | QMessageBox::Cancel);
+    box.setButtonText (QMessageBox::Ok, tr("OK"));
+    box.setButtonText (QMessageBox::Cancel, tr("Cancel"));
     box.setInformativeText (tr ("Click \"OK\" to begin installing the update"));
     box.setText ("<h3>" +
                  tr ("In order to install the update, you may need to "
@@ -181,6 +183,8 @@ void Downloader::cancelDownload() {
         box.setWindowTitle (tr ("Updater"));
         box.setIcon (QMessageBox::Question);
         box.setStandardButtons (QMessageBox::Yes | QMessageBox::No);
+        box.setButtonText (QMessageBox::Yes, tr("Yes"));
+        box.setButtonText (QMessageBox::No, tr("No"));
         box.setText (tr ("Are you sure you want to cancel the download?"));
 
         if (box.exec() == QMessageBox::Yes) {
