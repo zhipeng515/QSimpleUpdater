@@ -23,7 +23,8 @@ static const QString DEFS_URL = "https://raw.githubusercontent.com/"
 // Window::Window
 //==============================================================================
 
-Window::Window (QWidget* parent) : QMainWindow (parent) {
+Window::Window (QWidget* parent) : QMainWindow (parent)
+{
     m_ui = new Ui::Window;
     m_ui->setupUi (this);
 
@@ -33,8 +34,10 @@ Window::Window (QWidget* parent) : QMainWindow (parent) {
     m_updater = QSimpleUpdater::getInstance();
 
     /* Check for updates when the "Check For Updates" button is clicked */
-    connect (m_updater, SIGNAL (checkingFinished (QString)),
-             this,        SLOT (updateChangelog  (QString)));
+    connect (m_updater, SIGNAL (checkingFinished  (QString)),
+             this,        SLOT (updateChangelog   (QString)));
+    connect (m_updater, SIGNAL (appcastDownloaded (QString, QByteArray)),
+             this,        SLOT (displayAppcast    (QString, QByteArray)));
 
     /* React to button clicks */
     connect (m_ui->resetButton, SIGNAL (clicked()),
@@ -45,7 +48,8 @@ Window::Window (QWidget* parent) : QMainWindow (parent) {
              this,                SLOT (checkForUpdates()));
 
     /* Resize the dialog to fit */
-    setFixedSize (minimumSizeHint());
+    setMinimumSize (minimumSizeHint());
+    resize (minimumSizeHint());
 
     /* Reset the UI state */
     resetFields();
@@ -55,7 +59,8 @@ Window::Window (QWidget* parent) : QMainWindow (parent) {
 // Window::~Window
 //==============================================================================
 
-Window::~Window() {
+Window::~Window()
+{
     delete m_ui;
 }
 
@@ -63,8 +68,10 @@ Window::~Window() {
 // Window::checkForUpdates
 //==============================================================================
 
-void Window::resetFields() {
+void Window::resetFields()
+{
     m_ui->installedVersion->setText ("0.1");
+    m_ui->customAppcast->setChecked (false);
     m_ui->enableDownloader->setChecked (true);
     m_ui->showAllNotifcations->setChecked (false);
     m_ui->showUpdateNotifications->setChecked (true);
@@ -74,9 +81,11 @@ void Window::resetFields() {
 // Window::checkForUpdates
 //==============================================================================
 
-void Window::checkForUpdates() {
+void Window::checkForUpdates()
+{
     /* Get settings from the UI */
     QString version = m_ui->installedVersion->text();
+    bool customAppcast = m_ui->customAppcast->isChecked();
     bool downloaderEnabled = m_ui->enableDownloader->isChecked();
     bool notifyOnFinish = m_ui->showAllNotifcations->isChecked();
     bool notifyOnUpdate = m_ui->showUpdateNotifications->isChecked();
@@ -85,6 +94,7 @@ void Window::checkForUpdates() {
     m_updater->setModuleVersion (DEFS_URL, version);
     m_updater->setNotifyOnFinish (DEFS_URL, notifyOnFinish);
     m_updater->setNotifyOnUpdate (DEFS_URL, notifyOnUpdate);
+    m_updater->setUseCustomAppcast (DEFS_URL, customAppcast);
     m_updater->setDownloaderEnabled (DEFS_URL, downloaderEnabled);
 
     /* Check for updates */
@@ -95,7 +105,28 @@ void Window::checkForUpdates() {
 // Window::updateChangelog
 //==============================================================================
 
-void Window::updateChangelog (QString url) {
+void Window::updateChangelog (const QString& url)
+{
     if (url == DEFS_URL)
         m_ui->changelogText->setText (m_updater->getChangelog (url));
+}
+
+
+//==============================================================================
+// Window::displayAppcast
+//==============================================================================
+
+void Window::displayAppcast (const QString& url, const QByteArray& reply)
+{
+    if (url == DEFS_URL) {
+        QString text = "This is the downloaded appcast: <p><pre>" +
+                       QString::fromUtf8 (reply) +
+                       "</pre></p><p> If you need to store more information on the "
+                       "appcast (or use another format), just use the "
+                       "<b>QSimpleUpdater::setCustomAppcast()</b> function. "
+                       "It allows your application to interpret the appcast "
+                       "using your code and not QSU's code.</p>";
+
+        m_ui->changelogText->setText (text);
+    }
 }
